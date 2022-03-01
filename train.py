@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     model_path = "files/model.h5"
     batch_size = 16
-    epochs = sys.argv[1]
+    epochs = 20
     lr = 1e-4
     shape = (192, 256, 3)
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     train_dataset = tf_dataset(train_x, train_y, batch=batch_size)
     valid_dataset = tf_dataset(valid_x, valid_y, batch=batch_size)
-    model = load_model_weight(sys.argv[2])
+    model = load_model_weight(sys.argv[1])
     #model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
 
     callbacks = [
