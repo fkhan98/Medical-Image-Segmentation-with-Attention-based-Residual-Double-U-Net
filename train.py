@@ -84,8 +84,8 @@ if __name__ == "__main__":
     
     train_dataset = tf_dataset(train_x, train_y, batch=batch_size)
     valid_dataset = tf_dataset(valid_x, valid_y, batch=batch_size)
-    #model = load_model_weight(sys.argv[1])
-    model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
+    model = load_model_weight(sys.argv[1])
+    #model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
 
     callbacks = [
         ModelCheckpoint(model_path),
