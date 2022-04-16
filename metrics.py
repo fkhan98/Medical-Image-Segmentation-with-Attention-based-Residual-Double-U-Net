@@ -8,6 +8,8 @@ from tensorflow.keras.losses import binary_crossentropy
 smooth = 1e-15
 def dice_coef(y_true, y_pred):
     y_true = tf.keras.layers.Flatten()(y_true)
+    y_true *= (1 - 0.2)
+    y_true += (0.2 / 2)
     y_pred = tf.keras.layers.Flatten()(y_pred)
     intersection = tf.reduce_sum(y_true * y_pred)
     return (2. * intersection + smooth) / (tf.reduce_sum(y_true) + tf.reduce_sum(y_pred) + smooth)
