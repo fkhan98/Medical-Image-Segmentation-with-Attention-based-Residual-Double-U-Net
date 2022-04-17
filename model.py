@@ -66,6 +66,7 @@ def squeeze_excite_block(inputs, ratio=8):
 
 def conv_block(inputs, filters):
     x = inputs
+    shortcut = inputs
 
     x = Conv2D(filters, (3, 3), padding="same")(x)
     x = BatchNormalization()(x)
@@ -73,6 +74,11 @@ def conv_block(inputs, filters):
 
     x = Conv2D(filters, (3, 3), padding="same")(x)
     x = BatchNormalization()(x)
+
+    shortcut = Conv2D(filters, (1, 1), padding="same")(shortcut)
+    shortcut = BatchNormalization()(shortcut)
+
+    x = add([shortcut, x])
     x = Activation('relu')(x)
 
     x = squeeze_excite_block(x)
