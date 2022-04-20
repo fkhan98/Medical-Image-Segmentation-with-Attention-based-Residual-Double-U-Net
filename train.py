@@ -93,7 +93,7 @@ if __name__ == "__main__":
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=10),
         CSVLogger("files/data.csv"),
         TensorBoard(),
-        EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False)
+        EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
     ]
 
     train_steps = (len(train_x)//batch_size)
