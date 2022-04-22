@@ -104,11 +104,13 @@ if __name__ == "__main__":
 
     if len(valid_x) % batch_size != 0:
         valid_steps += 1
-
-    model.fit(train_dataset,
+        
+    history = model.fit(train_dataset,
             epochs=epochs,
             validation_data=valid_dataset,
             steps_per_epoch=train_steps,
             validation_steps=valid_steps,
             callbacks=callbacks,
             shuffle=False)
+
+    print(history.history)
