@@ -1,4 +1,3 @@
-
 import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
@@ -64,8 +63,32 @@ def squeeze_excite_block(inputs, ratio=8):
     x = Multiply()([init, se])
     return x
 
-def conv_block(inputs, filters):
+
+## regular conv block
+
+# def conv_block(inputs, filters, drop_out=0.0):
+#     x = inputs
+
+#     x = Conv2D(filters, (3, 3), padding="same")(x)
+#     x = BatchNormalization()(x)
+#     x = Activation('relu')(x)
+
+#     x = Conv2D(filters, (3, 3), padding="same")(x)
+#     x = BatchNormalization()(x)
+#     x = Activation('relu')(x)
+    
+#     if drop_out > 0:
+#         x = Dropout(drop_out)(x)
+
+#     x = squeeze_excite_block(x)
+
+#     return x
+
+## residual conv block
+
+def conv_block(inputs, filters, drop_out=0.0):
     x = inputs
+    shortcut = inputs
 
     x = Conv2D(filters, (3, 3), padding="same")(x)
     x = BatchNormalization()(x)
@@ -73,7 +96,15 @@ def conv_block(inputs, filters):
 
     x = Conv2D(filters, (3, 3), padding="same")(x)
     x = BatchNormalization()(x)
+
+    shortcut = Conv2D(filters, (1, 1), padding="same")(shortcut)
+    shortcut = BatchNormalization()(shortcut)
+
+    x = add([shortcut, x])
     x = Activation('relu')(x)
+
+    if drop_out > 0:
+        x = Dropout(drop_out)(x)
 
     x = squeeze_excite_block(x)
 
@@ -92,39 +123,31 @@ def encoder1(inputs):
 
 def decoder1(inputs, skip_connections):
     num_filters = [256, 128, 64, 32]
-    ##custom code##
-    channels = [512,256,128,64]
-    ##custom code##
+    ##custom code##{
+    channels = [512, 256, 128, 64]
+    ##custom code##}
     skip_connections.reverse()
     x = inputs
     shape = x.shape
 
     for i, f in enumerate(num_filters):
-        ##custom code##
+        ##custom code##{
         gating = gating_signal(x, channels[i], True)
         att = attention_block(skip_connections[i], gating, channels[i])
-        ##custom code##
+        ##custom code##}
         x = Conv2DTranspose(shape[3], (2, 2), activation="relu", strides=(2, 2))(x)
         #x = Concatenate()([x, skip_connections[i]])
-        ##custom code##
+        ##custom code##{
         x = Concatenate()([x, att])
-        ##custom code##
-        x = conv_block(x, f)
+        ##custom code##}
+
+        print(f"Applying dropout in decoder1 up layer {i + 1}")
+        if i < 2:
+            x = conv_block(x, f, drop_out=0.3)
+        else:
+            x = conv_block(x, f, drop_out=0.1)
 
     return x
-
-# def encoder2(inputs):
-#     skip_connections = []
-#
-#     output = DenseNet121(include_top=False, weights='imagenet')(inputs)
-#     model = tf.keras.models.Model(inputs, output)
-#
-#     names = ["input_2", "conv1/relu", "pool2_conv", "pool3_conv"]
-#     for name in names:
-#         skip_connections.append(model.get_layer(name).output)
-#     output = model.get_layer("pool4_conv").output
-#
-#     return output, skip_connections
 
 def encoder2(inputs):
     num_filters = [32, 64, 128, 256]
@@ -141,11 +164,10 @@ def encoder2(inputs):
 def decoder2(inputs, skip_1, skip_2):
     num_filters = [256, 128, 64, 32]
     ##custom code##{
-    channels = [512,256,128,64]
+    channels = [512, 256, 128, 64]
     ##custom code##}
     skip_2.reverse()
     x = inputs
-    
 
     for i, f in enumerate(num_filters):
         ##custom code##{
@@ -158,7 +180,12 @@ def decoder2(inputs, skip_1, skip_2):
         ##custom code##{
         x = Concatenate()([x, skip_1[i], att_enc_2])
         ##custom code##}
-        x = conv_block(x, f)
+
+        print(f"Applying dropout in decoder2 up layer {i + 1}")
+        if i < 2:
+            x = conv_block(x, f, drop_out=0.5)
+        else:
+            x = conv_block(x, f, drop_out=0.3)
 
     return x
 
