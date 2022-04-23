@@ -77,7 +77,7 @@ if __name__ == "__main__":
     tf.random.set_seed(42)
     create_dir("results/")
 
-    batch_size = 8
+    batch_size = sys.argv[1]
 
     test_path = "../1/new_data/test/"
     test_x = sorted(glob(os.path.join(test_path, "image", "*.jpg")))
