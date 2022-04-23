@@ -8,6 +8,7 @@ from metrics import *
 from sklearn.utils import shuffle
 from tensorflow.keras.utils import CustomObjectScope
 from tensorflow.keras.models import load_model
+from tensorflow.keras.optimizers import RMSprop, Adam
 from model import build_model, Upsample, ASPP
 
 def create_dir(path):
