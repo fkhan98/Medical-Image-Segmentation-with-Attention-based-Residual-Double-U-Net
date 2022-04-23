@@ -2,6 +2,7 @@
 import os
 import numpy as np
 import cv2
+import sys
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import CustomObjectScope
@@ -79,7 +80,7 @@ if __name__ == "__main__":
 
     batch_size = sys.argv[1]
 
-    test_path = "../1/new_data/test/"
+    test_path = sys.argv[2]
     test_x = sorted(glob(os.path.join(test_path, "image", "*.jpg")))
     test_y = sorted(glob(os.path.join(test_path, "mask", "*.jpg")))
     test_dataset = tf_dataset(test_x, test_y, batch=batch_size)
@@ -88,6 +89,6 @@ if __name__ == "__main__":
     if len(test_x) % batch_size != 0:
         test_steps += 1
 
-    model = load_model_weight("files/model.h5")
+    model = load_model_weight(sys.argv[3])
     model.evaluate(test_dataset, steps=test_steps)
     evaluate_normal(model, test_x, test_y)
