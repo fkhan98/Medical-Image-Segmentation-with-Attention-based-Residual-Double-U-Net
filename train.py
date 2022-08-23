@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
     model_path = "files/model.h5"
     batch_size = 16
-    epochs = 30
-    lr = 1e-4
+    epochs = 10
+    lr = 1e-5
     shape = (192, 256, 3)
 
     model = build_model(shape)
@@ -84,8 +84,8 @@ if __name__ == "__main__":
     
     train_dataset = tf_dataset(train_x, train_y, batch=batch_size)
     valid_dataset = tf_dataset(valid_x, valid_y, batch=batch_size)
-    # model = load_model_weight(sys.argv[1])
-    model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
+    model = load_model_weight(sys.argv[1])
+#     model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
 
     callbacks = [
         ModelCheckpoint(model_path,monitor='val_loss', verbose=2, 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=10),
         CSVLogger("files/data.csv"),
         TensorBoard(),
-        EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=False)
+        EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
     ]
 
     train_steps = (len(train_x)//batch_size)
@@ -104,11 +104,13 @@ if __name__ == "__main__":
 
     if len(valid_x) % batch_size != 0:
         valid_steps += 1
-
-    model.fit(train_dataset,
+        
+    history = model.fit(train_dataset,
             epochs=epochs,
             validation_data=valid_dataset,
             steps_per_epoch=train_steps,
             validation_steps=valid_steps,
             callbacks=callbacks,
             shuffle=False)
+
+    print(history.history)
