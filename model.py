@@ -252,5 +252,5 @@ def build_model(shape):
     return model
 
 if __name__ == "__main__":
-    model = build_model((192, 256, 3))
+    model = build_model((288,384, 3))
     model.summary()
