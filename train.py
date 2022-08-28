@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     model_path = "files/model.h5"
     batch_size = 16
-    epochs = 30
+    epochs = 35
     lr = 1e-4
     shape = (192, 256, 3)
 
