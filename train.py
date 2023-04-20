@@ -69,10 +69,10 @@ if __name__ == "__main__":
     valid_y = sorted(glob(os.path.join(valid_path, "mask", "*.jpg")))
 
     model_path = "files/model.h5"
-    batch_size = 8
-    epochs = 35
+    batch_size = 16
+    epochs = 30
     lr = 1e-4
-    shape = (288,384, 3)
+    shape = (192, 256, 3)
 
     model = build_model(shape)
     metrics = [
@@ -84,8 +84,9 @@ if __name__ == "__main__":
     
     train_dataset = tf_dataset(train_x, train_y, batch=batch_size)
     valid_dataset = tf_dataset(valid_x, valid_y, batch=batch_size)
-    #model = load_model_weight(sys.argv[1])
-    model.compile(loss=dice_loss, optimizer=Nadam(lr), metrics=metrics)
+
+    # model = load_model_weight(sys.argv[1])
+    model.compile(loss=dice_loss, optimizer=Adam(lr), metrics=metrics)
 
     callbacks = [
         ModelCheckpoint(model_path,monitor='val_loss', verbose=2, 
