@@ -97,8 +97,9 @@ def conv_block(inputs, filters, drop_out=0.0):
     x = Conv2D(filters, (3, 3), padding="same")(x)
     x = BatchNormalization()(x)
 
-    shortcut = Conv2D(filters, (1, 1), padding="same")(shortcut)
-    shortcut = BatchNormalization()(shortcut)
+    # # for vanilla residual conv block, comment out the following 2 lines
+    # shortcut = Conv2D(filters, (1, 1), padding="same")(shortcut)
+    # shortcut = BatchNormalization()(shortcut)
 
     x = add([shortcut, x])
     x = Activation('relu')(x)
@@ -143,9 +144,9 @@ def decoder1(inputs, skip_connections):
 
         print(f"Applying dropout in decoder1 up layer {i + 1}")
         if i < 2:
-            x = conv_block(x, f, drop_out=0.5)
+            x = conv_block(x, f, drop_out=0.0)
         else:
-            x = conv_block(x, f, drop_out=0.3)
+            x = conv_block(x, f, drop_out=0.0)
 
     return x
 
@@ -183,9 +184,9 @@ def decoder2(inputs, skip_1, skip_2):
 
         print(f"Applying dropout in decoder2 up layer {i + 1}")
         if i < 2:
-            x = conv_block(x, f, drop_out=0.5)
+            x = conv_block(x, f, drop_out=0.0)
         else:
-            x = conv_block(x, f, drop_out=0.5)
+            x = conv_block(x, f, drop_out=0.0)
 
     return x
 
